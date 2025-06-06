@@ -321,4 +321,18 @@ class Spark {
     }
   }
 }
-//End of group artwork
+//End of group artwork code
+
+//Start of User Input
+//Mouse pressed to change a random colour for each blob
+function mousePressed() {
+  for (let b of blobs) {
+  //Change colour for each blob
+  b.c = clor(
+    random(100, 255),
+    random(100, 255),
+    random(100, 255),
+    b.alpha //The transparency of the blobs will not change along each press
+  );
+  }
+}
