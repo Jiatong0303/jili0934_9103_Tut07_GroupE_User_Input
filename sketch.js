@@ -4,10 +4,19 @@ let holes = [];
 let sparks = [];
 let bgTexture;
 
+//User Input_Mouse Ripple
+let circleX;
+let circleY;
+let circleSize = 0;
+
 function setup() {
   createCanvas(900, 900);
   background(0);
   noStroke();
+
+  //User Input_Mouse Ripple
+  circleX = width / 2;
+  circleY = height / 2;
 
   // Create background texture
   bgTexture = createGraphics(width, height);
@@ -51,6 +60,19 @@ function draw() {
     s.update();
     s.show();
   }
+
+  //User Input_Mouse Ripple
+  circleSize += 10;
+
+  push();
+  noFill();
+  strokeWeight(2);
+  stroke(255, 240, 180, 150); //(r, g, b, alpha (transparency))
+  circle(circleX, circleY, circleSize); //Ripple_1
+  circle(circleX, circleY, circleSize * 0.75); //Ripple_2
+  circle(circleX, circleY, circleSize * 0.5); //Ripple_3
+  circle(circleX, circleY, circleSize * 0.25); //Ripple_4
+  pop();
 }
 
 // Create background texture function
@@ -327,12 +349,18 @@ class Spark {
 //Mouse pressed to change a random colour for each blob
 function mousePressed() {
   for (let b of blobs) {
-  //Change colour for each blob
-  b.c = clor(
+  //Change a random colour for each blob
+  b.c = color(
     random(100, 255),
     random(100, 255),
     random(100, 255),
     b.alpha //The transparency of the blobs will not change along each press
   );
   }
+
+  //User Input_Mouse Ripple
+  //The position of the ripple
+  circleX = mouseX;
+  circleY = mouseY;
+  circleSize = 0;
 }
