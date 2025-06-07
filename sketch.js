@@ -364,3 +364,28 @@ function mousePressed() {
   circleY = mouseY;
   circleSize = 0;
 }
+
+//Add function keyPressed
+function keyPressed(){
+  if (keyCode === UP_ARROW) {
+    for (let b of blobs) {
+      b.rBase += 5;
+      //(every time the user presses the up arrow)
+      //The blobs will increase their size based on their radius base size
+      b.rBase = constrain(b.rBase, 10, 200); 
+      //Constrain the blob radius to stay within the range of minimum (10) to maximum (200)
+      //To avoid blobs become too small or too large.
+    }
+  }
+
+  if (keyCode === DOWN_ARROW) {
+    for (let b of blobs) {
+      b.rBase -= 5;
+      //(every time the user presses the down arrow)
+      //The blobs will reduce their size based on their radius base size
+      b.rBase = constrain(b.rBase, 10, 200);
+      //Constrain the blob radius to stay within the range of minimum (10) to maximum (200)
+      //To avoid blobs become too small or too large.
+    }
+  }
+}
