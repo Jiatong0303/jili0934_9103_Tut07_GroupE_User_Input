@@ -72,7 +72,8 @@ function draw() {
   circle(circleX, circleY, circleSize * 0.75); //Ripple_2
   circle(circleX, circleY, circleSize * 0.5); //Ripple_3
   circle(circleX, circleY, circleSize * 0.25); //Ripple_4
-  pop();
+  pop(); 
+  //9103 Week 10 Tutorial module
 }
 
 // Create background texture function
@@ -347,11 +348,12 @@ class Spark {
 
 //Start of User Input
 //Mouse pressed to change a random colour for each blob
+//P5.js (n.d.). mousePressed(). https://p5js.org/reference/p5/mousePressed/ 
 function mousePressed() {
   for (let b of blobs) {
   //Change a random colour for each blob
   b.c = color(
-    random(100, 255),
+    random(100, 255), //Random value between 100 to 255
     random(100, 255),
     random(100, 255),
     b.alpha //The transparency of the blobs will not change along each press
@@ -364,8 +366,11 @@ function mousePressed() {
   circleY = mouseY;
   circleSize = 0;
 }
+//Mouse ripple code from Happy Coding: 
+//Happy Coding. (n.d.). Mouse Ripple. https://happycoding.io/tutorials/p5js/input/mouse-ripple
 
 //Add function keyPressed
+//9103 Week 6 Tutorial module
 function keyPressed(){
   if (keyCode === UP_ARROW) {
     for (let b of blobs) {
