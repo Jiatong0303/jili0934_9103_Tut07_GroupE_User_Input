@@ -36,3 +36,16 @@ The inspiration for the mouse ripple effect came from the circle patterns in the
 
 **Figure 2.** Water ripples
 
+**Code Inspiration**
+- funtion mousePressed()
+
+The function mousePressed() was sourced from the p5.js website. This function allows users to interact with the artwork by clicking on the canvas. In my project,  I used this function for the ripple effect and a random colour change applied to all blobs with each click.
+
+- mouse ripple
+
+The ripple effect that appears on the canvas when the user presses the mouse is inspired by Happy Coding. Happy Coding demonstrated how to create a ripple effect based on the function mousePressed() with circle(). I chose to use this code because it provides a direct response when a user clicks on the canvas. The ripple effect is also well integrated into the artwork.
+
+![A gif of mouse ripples effect](readme_image/mouse-ripple-1.gif)
+**Figure 3** Happy Coding: mouse ripple effect
+
+### 4. Reference list
