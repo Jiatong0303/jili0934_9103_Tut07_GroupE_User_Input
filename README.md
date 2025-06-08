@@ -26,13 +26,13 @@ These features make my animation different from other group members. While other
 
 ### 3. References to inspiration for animating your individual code.
 **Visual Inspiration**
-![An image of the group artwork](readme_image/group_artwork.JPG)
+![An image of the group artwork](readme_image/group_artwork.jpg)
 
 **Figure 1.** Screenshot from the group artwork
 
 The inspiration for the mouse ripple effect came from the circle patterns in the centre of each blob from our group artwork. These circle outlines reminded me of water ripples, which share a similar layered and expanded form.
 
-![An image of water ripples](readme_image/water_ripples.JPG)
+![An image of water ripples](readme_image/water_ripples.jpg)
 
 **Figure 2.** Water ripples
 
