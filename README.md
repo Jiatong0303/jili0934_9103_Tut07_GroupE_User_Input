@@ -49,3 +49,10 @@ The ripple effect that appears on the canvas when the user presses the mouse is 
 **Figure 3** Happy Coding: mouse ripple effect
 
 ### 4. Reference list
+Bella. (n.d.). *Water Ripple.* [Watercolour]. Pinterest. https://au.pinterest.com/pin/211174978071095/ 
+
+Happy Coding. (n.d.). *Mouse Ripple.* https://happycoding.io/tutorials/p5js/input/mouse-ripple
+
+Happy Coding. (n.d.). *Mouse Ripple.* [GIF]. Happy Coding. https://happycoding.io/tutorials/p5js/input/mouse-ripple 
+
+P5.js (n.d.). *mousePressed().* https://p5js.org/reference/p5/mousePressed/ 
