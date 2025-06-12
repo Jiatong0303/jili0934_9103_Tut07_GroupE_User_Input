@@ -344,7 +344,7 @@ class Spark {
     }
   }
 }
-//End of group artwork code + Perlin noise and randomness
+//End of group artwork code
 
 //Start of User Input
 //Mouse pressed to change a random colour for each blob

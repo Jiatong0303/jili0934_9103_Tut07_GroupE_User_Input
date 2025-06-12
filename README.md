@@ -3,7 +3,7 @@
 
 #### Group E - User Input
 
-### 1. Instructions on how to interact with the work
+### 1. Instructions on how to interact with the work.
 1. Click anywhere on the canvas to change a random colour for each blob.
 2. Click on the canvas to create a ripple effect at the mouse position.
 3. Press the UP ARROW key to increase the size of the blobs.
