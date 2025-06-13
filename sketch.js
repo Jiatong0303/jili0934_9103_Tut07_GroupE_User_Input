@@ -1,3 +1,7 @@
+const BASE_SIZE = 900;
+let scaleFactor;
+let offsetX, offsetY;
+
 let blobs = [];
 let radiants = [];
 let holes = [];
@@ -9,9 +13,16 @@ let circleX;
 let circleY;
 let circleSize = 0;
 
+function calculateScale() {
+  // scale to screen
+  scaleFactor = max(windowWidth / BASE_SIZE, windowHeight / BASE_SIZE);
+  offsetX = (windowWidth - BASE_SIZE * scaleFactor) / 2;
+  offsetY = (windowHeight - BASE_SIZE * scaleFactor) / 2;
+}
+
 function setup() {
+  calculateScale();
   createCanvas(windowWidth, windowHeight);
-  background(0);
   noStroke();
 
   //User Input_Mouse Ripple
@@ -19,24 +30,14 @@ function setup() {
   circleY = height / 2;
 
   // Create background texture
-  bgTexture = createGraphics(width, height);
+  bgTexture = createGraphics(windowWidth, windowHeight);
   createTexture(bgTexture);
 
-  for (let i = 0; i < 60; i++) {
-    blobs.push(new NoiseBlob());
-  }
-
-  for (let i = 0; i < 25; i++) {
-    radiants.push(new Radiant());
-  }
-
-  for (let i = 0; i < 20; i++) {
-    holes.push(new Hole());
-  }
-  // Increase the number of sparks
-  for (let i = 0; i < 200; i++) { 
-    sparks.push(new Spark());
-  }
+  // initialize objects
+  for (let i = 0; i < 50; i++) blobs.push(new NoiseBlob());
+  for (let i = 0; i < 25; i++) radiants.push(new Radiant());
+  for (let i = 0; i < 20; i++) holes.push(new Hole());
+  for (let i = 0; i < 50; i++) sparks.push(new Spark());
 }
 
 function draw() {
@@ -45,7 +46,7 @@ function draw() {
   
   // Softer effect
   fill(0, 25);
-  rect(0, 0, width, height);
+  rect(0, 0, windowWidth, windowHeight);
 
   for (let h of holes) h.show();
   for (let b of blobs) {
@@ -77,84 +78,49 @@ function draw() {
 }
 
 function windowResized() {
-  /**
-   * Ensures that all components properly scale and reposition when the window changes size.
-   */
+  calculateScale();
   resizeCanvas(windowWidth, windowHeight);
-  bgTexture = createGraphics(width, height);
-  createTexture(bgTexture);
-
-  // Recalculate element positions and sizes using stored normalized coordinates
-  for (let b of blobs) {
-    b.x = b.normX * width;
-    b.y = b.normY * height;
-    b.rBase *= min(width, height) / 900;
-  }
-  for (let r of radiants) {
-    r.x = r.normX * width;
-    r.y = r.normY * height;
-    r.r *= min(width, height) / 900;
-    r.lineLength *= min(width, height) / 900;
-  }
-  for (let h of holes) {
-    h.x = h.normX * width;
-    h.y = h.normY * height;
-    h.r *= min(width, height) / 900;
-    h.innerR *= min(width, height) / 900;
-  }
-  for (let s of sparks) {
-    s.x = s.normX * width;
-    s.y = s.normY * height;
-  }
 }
-
 
 // Create background texture function
 function createTexture(g) {
   g.background(0);
   g.noStroke();
-  
-  // Adding nosie texture
   for (let i = 0; i < 10000; i++) {
-    let x = random(width);
-    let y = random(height);
-    let s = random(0.5, 2);
-    let a = random(5, 15);
+    let x = random(g.width), y = random(g.height);
+    let s = random(0.5, 2), a = random(5, 15);
     g.fill(30, 20, 40, a);
     g.ellipse(x, y, s);
   }
-  
-  // Adding line texture
   g.stroke(40, 30, 50, 10);
   for (let i = 0; i < 50; i++) {
-    let x1 = random(width);
-    let y1 = random(height);
-    let x2 = x1 + random(-100, 100);
-    let y2 = y1 + random(-100, 100);
+    let x1 = random(g.width), y1 = random(g.height);
+    let x2 = x1 + random(-100, 100), y2 = y1 + random(-100, 100);
     g.line(x1, y1, x2, y2);
   }
 }
 
 // class NoiseBlob
 class NoiseBlob {
-  constructor() {
-    this.normX = random();
-    this.normY = random();
-    this.x = this.normX * width;
-    this.y = this.normY * height;
-    this.rBase = random(0, 120) * (min(width, height)/900); // base radius
-    this.alpha = random(30, 120);
-    this.phase = random(TWO_PI);
-    this.speed = random(0.003, 0.01);
-    this.c = color(
-      255 + random(-30, 0), 
-      180 + random(-30, 30), 
-      120 + random(-50, 50), 
-      this.alpha
-    );
-    this.depth = random(1); 
-    this.noiseScale = random(0.005, 0.02); // Add Noise Displacement
-  }
+    constructor() {
+      this.x = random(width);
+      this.y = random(height);
+      // base radius and properties
+      this.rBase = random(20, 120) / 1.5;
+      this.alpha = random(30, 120);
+      this.phase = random(TWO_PI);
+      this.speed = random(0.01, 0.02);
+      this.baseColor = color(
+        255 + random(-30, 0),
+        180 + random(-30, 30),
+        120 + random(-50, 50),
+        this.alpha
+      );
+      this.c = this.baseColor;
+      this.depth = random(1);
+      this.noiseScale = random(0.02, 0.05);
+      this.r = this.rBase;
+    }
 
   update() {
     this.phase += this.speed;
@@ -205,19 +171,19 @@ class NoiseBlob {
 // class Radiant
 class Radiant {
   constructor() {
-    this.normX = random();
-    this.normY = random();
-    this.x = this.normX * width;
-    this.y = this.normY * height;
-    this.r = random(15, 50) * (min(width, height)/900);// added
-    this.n = int(random(20, 100));
-    this.alpha = random(40, 120);
+    this.x = random(width);
+    this.y = random(height);
+    this.r = random(20, 60);
+    this.n = int(random(30, 120));
+    this.alpha = random(30, 100);  
     this.angle = random(TWO_PI);
-    this.rotSpeed = random(0.001, 0.02);
-    this.lineLength = random(15, 40);
+    this.rotSpeed = random(0.001, 0.03);
+    this.lineLength = random(20, 60);
     this.depth = random(1);
-    this.pulseSpeed = random(0.01, 0.03);
+    this.pulseSpeed = random(0.05, 0.08);
     this.pulsePhase = random(TWO_PI);
+    this.currentLength = this.lineLength;
+    this.centerSize = this.r * 0.6;
   }
 
   update() {
@@ -264,64 +230,53 @@ class Radiant {
   }
 }
 
-// Create circles
+// Create holes
 class Hole {
-  constructor() {
-    this.normX = random();
-    this.normY = random();
-    this.x = this.normX * width;
-    this.y = this.normY * height;
-    this.r = random(5, 10) * (min(width, height)/900);
-    this.innerR = this.r * random(0.3, 0.7);
-    this.innerColor = color(20 + random(-10, 10), 10 + random(-5, 5), 30 + random(-10, 10));
+    constructor() {
+      this.x = random(width);
+      this.y = random(height);
+      this.r = random(5, 12);
+      this.depth = random(1);
+      this.innerR = this.r * random(0.3, 0.7);
+      this.innerColor = color(
+        20 + random(-10, 10),
+        10 + random(-5, 5),
+        30 + random(-10, 10)
+      );
+    }
+  
+    show() {
+      push();
+      translate(this.x, this.y);
+      noStroke();
+      fill(0);
+      ellipse(0, 0, this.r * 2);
+      fill(this.innerColor);
+      ellipse(0, 0, this.innerR * 2);
+      fill(60, 50, 80, 100);
+      ellipse(this.r * 0.2, -this.r * 0.2, this.r * 0.3);
+      pop();
+    }
   }
-
-  show() {
-    push();
-    translate(this.x, this.y);
-    
-    // Outside
-    noStroke();
-    fill(0);
-    ellipse(0, 0, this.r * 2);
-    
-    // Inside
-    fill(this.innerColor);
-    ellipse(0, 0, this.innerR * 2);
-    
-    // Adding some highlignts
-    fill(60, 50, 80, 100);
-    ellipse(
-      this.r * 0.2, 
-      -this.r * 0.2, 
-      this.r * 0.3
-    );
-    
-    pop();
-  }
-}
 
 // Create sparks
 class Spark {
   constructor() {
-    /**
-     * When created, immediately call reset to initialize position and attributes.
-     */
-    this.normX = random();
-    this.normY = random();
     this.reset();
-    this.type = random() > 0.7 ? "line" : "dot"; // Different style for variety
+    this.life = random(80, 400);
+    this.age = random(this.life);
+    this.type = random() > 0.7 ? "line" : "dot";
   }
-  
+
   reset() {
-    this.x = this.normX * width;
-    this.y = this.normY * height;
-    this.vx = random(-0.5, 0.5);
-    this.vy = random(-0.5, 0.5);
-    this.size = random(1, 3);
-    this.baseAlpha = random(50, 150);
+    this.x = random(width);
+    this.y = random(height);
+    this.vx = random(-1.5, 1.5);
+    this.vy = random(-1.5, 1.5);
+    this.size = random(1, 4);
+    this.baseAlpha = random(100, 255);
     this.colorVariation = random(100);
-    this.life = random(100, 500);
+    this.life = random(80, 400);
     this.age = 0;
   }
 
@@ -329,8 +284,10 @@ class Spark {
     this.x += this.vx;
     this.y += this.vy;
     this.age++;
-    if (this.age > this.life || this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
+    if (this.age > this.life || this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+      this.reset();
     }
+  }
 
   show() {
     let alpha = this.baseAlpha * (0.5 + 0.5 * sin(this.age * 0.05));
