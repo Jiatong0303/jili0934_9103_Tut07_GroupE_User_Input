@@ -34,7 +34,7 @@ function setup() {
   createTexture(bgTexture);
 
   // initialize objects
-  for (let i = 0; i < 50; i++) blobs.push(new NoiseBlob());
+  for (let i = 0; i < 100; i++) blobs.push(new NoiseBlob());
   for (let i = 0; i < 25; i++) radiants.push(new Radiant());
   for (let i = 0; i < 20; i++) holes.push(new Hole());
   for (let i = 0; i < 50; i++) sparks.push(new Spark());
@@ -42,12 +42,15 @@ function setup() {
 
 function draw() {
   // Show Background Texture
-  image(bgTexture, 0, 0);
+  image(bgTexture, offsetX, offsetY, BASE_SIZE * scaleFactor, BASE_SIZE * scaleFactor);
   
   // Softer effect
   fill(0, 25);
   rect(0, 0, windowWidth, windowHeight);
 
+  push();
+  translate(offsetX, offsetY);
+  scale(scaleFactor);
   for (let h of holes) h.show();
   for (let b of blobs) {
     b.update();
@@ -61,6 +64,7 @@ function draw() {
     s.update();
     s.show();
   }
+  pop();
 
   //User Input_Mouse Ripple
   circleSize += 10;
@@ -103,8 +107,8 @@ function createTexture(g) {
 // class NoiseBlob
 class NoiseBlob {
     constructor() {
-      this.x = random(width);
-      this.y = random(height);
+      this.x = random(BASE_SIZE);
+      this.y = random(BASE_SIZE);
       // base radius and properties
       this.rBase = random(20, 120) / 1.5;
       this.alpha = random(30, 120);
@@ -129,10 +133,10 @@ class NoiseBlob {
     this.x += map(noise(frameCount * this.noiseScale, 0), -1, 1, -0.3, 0.3);
     this.y += map(noise(0, frameCount * this.noiseScale), -1, 1, -0.3, 0.3);
     
-    if (this.x < 0) this.x = width;
-    if (this.x > width) this.x = 0;
-    if (this.y < 0) this.y = height;
-    if (this.y > height) this.y = 0;
+    if (this.x < 0) this.x = BASE_SIZE;
+    if (this.x > BASE_SIZE) this.x = 0;
+    if (this.y < 0) this.y = BASE_SIZE;
+    if (this.y > BASE_SIZE) this.y = 0;
   }
 
   show() {
