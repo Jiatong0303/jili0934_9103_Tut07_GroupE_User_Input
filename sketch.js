@@ -10,7 +10,7 @@ let circleY;
 let circleSize = 0;
 
 function setup() {
-  createCanvas(900, 900);
+  createCanvas(windowWidth, windowHeight);
   background(0);
   noStroke();
 
@@ -76,6 +76,39 @@ function draw() {
   //9103 Week 10 Tutorial module
 }
 
+function windowResized() {
+  /**
+   * Ensures that all components properly scale and reposition when the window changes size.
+   */
+  resizeCanvas(windowWidth, windowHeight);
+  bgTexture = createGraphics(width, height);
+  createTexture(bgTexture);
+
+  // Recalculate element positions and sizes using stored normalized coordinates
+  for (let b of blobs) {
+    b.x = b.normX * width;
+    b.y = b.normY * height;
+    b.rBase *= min(width, height) / 900;
+  }
+  for (let r of radiants) {
+    r.x = r.normX * width;
+    r.y = r.normY * height;
+    r.r *= min(width, height) / 900;
+    r.lineLength *= min(width, height) / 900;
+  }
+  for (let h of holes) {
+    h.x = h.normX * width;
+    h.y = h.normY * height;
+    h.r *= min(width, height) / 900;
+    h.innerR *= min(width, height) / 900;
+  }
+  for (let s of sparks) {
+    s.x = s.normX * width;
+    s.y = s.normY * height;
+  }
+}
+
+
 // Create background texture function
 function createTexture(g) {
   g.background(0);
@@ -105,9 +138,11 @@ function createTexture(g) {
 // class NoiseBlob
 class NoiseBlob {
   constructor() {
-    this.x = random(width);
-    this.y = random(height);
-    this.rBase = random(0, 120); 
+    this.normX = random();
+    this.normY = random();
+    this.x = this.normX * width;
+    this.y = this.normY * height;
+    this.rBase = random(0, 120) * (min(width, height)/900); // base radius
     this.alpha = random(30, 120);
     this.phase = random(TWO_PI);
     this.speed = random(0.003, 0.01);
@@ -170,9 +205,11 @@ class NoiseBlob {
 // class Radiant
 class Radiant {
   constructor() {
-    this.x = random(width);
-    this.y = random(height);
-    this.r = random(15, 50); 
+    this.normX = random();
+    this.normY = random();
+    this.x = this.normX * width;
+    this.y = this.normY * height;
+    this.r = random(15, 50) * (min(width, height)/900);// added
     this.n = int(random(20, 100));
     this.alpha = random(40, 120);
     this.angle = random(TWO_PI);
@@ -230,16 +267,13 @@ class Radiant {
 // Create circles
 class Hole {
   constructor() {
-    this.x = random(width);
-    this.y = random(height);
-    this.r = random(5, 10); 
-    this.depth = random(1);
+    this.normX = random();
+    this.normY = random();
+    this.x = this.normX * width;
+    this.y = this.normY * height;
+    this.r = random(5, 10) * (min(width, height)/900);
     this.innerR = this.r * random(0.3, 0.7);
-    this.innerColor = color(
-      20 + random(-10, 10),
-      10 + random(-5, 5),
-      30 + random(-10, 10)
-    );
+    this.innerColor = color(20 + random(-10, 10), 10 + random(-5, 5), 30 + random(-10, 10));
   }
 
   show() {
@@ -270,15 +304,18 @@ class Hole {
 // Create sparks
 class Spark {
   constructor() {
+    /**
+     * When created, immediately call reset to initialize position and attributes.
+     */
+    this.normX = random();
+    this.normY = random();
     this.reset();
-    this.life = random(100, 500);
-    this.age = random(this.life);
-    this.type = random() > 0.7 ? "line" : "dot"; // 不同类型的粒子
+    this.type = random() > 0.7 ? "line" : "dot"; // Different style for variety
   }
   
   reset() {
-    this.x = random(width);
-    this.y = random(height);
+    this.x = this.normX * width;
+    this.y = this.normY * height;
     this.vx = random(-0.5, 0.5);
     this.vy = random(-0.5, 0.5);
     this.size = random(1, 3);
@@ -292,54 +329,22 @@ class Spark {
     this.x += this.vx;
     this.y += this.vy;
     this.age++;
-    
-    // Reset
-    if (this.age > this.life || 
-        this.x < 0 || this.x > width || 
-        this.y < 0 || this.y > height) {
-      this.reset();
+    if (this.age > this.life || this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
     }
-  }
 
   show() {
-    // Spark
     let alpha = this.baseAlpha * (0.5 + 0.5 * sin(this.age * 0.05));
-    
     if (this.type === "line") {
-      // Linear
       let angle = noise(this.x * 0.01, this.y * 0.01) * TWO_PI;
       let len = this.size * 3;
-      stroke(
-        255 - this.colorVariation, 
-        215 - this.colorVariation * 0.5, 
-        130 + this.colorVariation * 0.3, 
-        alpha
-      );
+      stroke(255 - this.colorVariation, 215 - this.colorVariation * 0.5, 130 + this.colorVariation * 0.3, alpha);
       strokeWeight(this.size * 0.5);
-      line(
-        this.x, 
-        this.y, 
-        this.x + cos(angle) * len, 
-        this.y + sin(angle) * len
-      );
+      line(this.x, this.y, this.x + cos(angle) * len, this.y + sin(angle) * len);
     } else {
-      // Dot
       noStroke();
-      fill(
-        255 - this.colorVariation, 
-        215 - this.colorVariation * 0.5, 
-        130 + this.colorVariation * 0.3, 
-        alpha
-      );
+      fill(255 - this.colorVariation, 215 - this.colorVariation * 0.5, 130 + this.colorVariation * 0.3, alpha);
       ellipse(this.x, this.y, this.size);
-      
-      // Adding some glow effect
-      fill(
-        255 - this.colorVariation, 
-        215 - this.colorVariation * 0.5, 
-        130 + this.colorVariation * 0.3, 
-        alpha * 0.3
-      );
+      fill(255 - this.colorVariation, 215 - this.colorVariation * 0.5, 130 + this.colorVariation * 0.3, alpha * 0.3);
       ellipse(this.x, this.y, this.size * 3);
     }
   }
